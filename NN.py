@@ -28,7 +28,7 @@ class NeuralNet:
         #(1,n_out)行ベクトル
         mid_vec = v*self.output*(1-self.output)
 
-        out_vec = self.mid*(1-self.mid) * sum(mid_vec * self.weight_out)
+        out_vec =  (mid_vec * self.weight_out).dot(np.ones(20)) * self.mid*(1-self.mid)
         
         #(n_in,n_mid)行列
         self.update_mid = self.eta * np.array( np.matrix(self.input).T * out_vec) + self.alpha * self.update_mid
