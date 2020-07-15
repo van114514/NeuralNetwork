@@ -49,32 +49,19 @@ class NeuralNet:
 
     def learn(self, dataset):
         mse = 0
+        kn = self.output.size
         for i in range(dataset.shape[0]):
             for j in range(dataset.shape[1]):
                 t = self.teacher[i] - self.forward(dataset[i][j])
                 #重みの更新
                 self.updateWeights(t)
-                mse += np.sum((t * t))/len(t)
+                mse += np.sum((t * t))/kn
         
         #出力ユニットの平均2乗誤差
-        mse /= dataset.shape[0]
+        mse /= self.input.size
+        
         return mse
 
-
-    
-    # def mse(self, dataset):
-    #     s = 0
-    #     for i in range(dataset.shape[0]):
-    #         for j in range(dataset.shape[1]):
-    #             t = self.teacher[i] - self.forward(dataset[i][j])
-    #             s += np.sum((t * t))/len(t)
-    #     s /= dataset.shape[0]
-    #     return s
-
-    # def predict(self, data):
-    #     y = self.forward(data)
-    #     return np.argmax(y)
-    
     def test(self, dataset):
         ans_list = []
         for i in range(dataset.shape[0]):

@@ -1,40 +1,61 @@
 import numpy as np
+from math import floor
 import os
 import NN
 
-def partially_feature(p, ii, jj):
-    feature = 0.0
-    for i in range(8):
-        for j in range(8):
-            if(p[8*ii + i][8*jj + j] == '1'):
-                feature += 1
-    return feature / 64
+# def partially_feature(p, ii, jj):
+#     feature = 0.0
+#     for i in range(8):
+#         for j in range(8):
+#             if(p[8*ii + i][8*jj + j] == '1'):
+#                 feature += 1
+#     return feature / 64
 
-def extract_feature(p):
-    buf = np.empty(64, dtype='float32')
-    for i in range(8):
-        for j in range(8):
-            buf[8*i + j] = partially_feature(p, i, j)
-    return buf
+# def extract_feature(p):
+#     buf = np.empty(64, dtype='float32')
+#     for i in range(8):
+#         for j in range(8):
+#             buf[8*i + j] = partially_feature(p, i, j)
+#     return buf
 
-def read_onefile(path):
-    buf = np.empty((100,64), dtype='float32')
-    with open(path) as f:
-        p = np.array(f.readlines())
-    for charas in range(100):
-        buf[charas][:] = extract_feature(p[64*charas:64*charas+64])
-    return buf
+# def read_onefile(path):
+#     buf = np.empty((100,64), dtype='float32')
+#     with open(path) as f:
+#         p = np.array(f.readlines())
+#     for charas in range(100):
+#         buf[charas][:] = extract_feature(p[64*charas:64*charas+64])
+#     return buf
 
 
+
+# def generateDateSet(who,how):
+#     data = np.empty((20,100,64),dtype='float32')
+
+#     for i in range(20):
+#         buf = np.empty((100,64), dtype='float32')
+#         with open("hira{}_{:0>2}{}.dat".format(who,i,how)) as f:
+#             p = np.array(f.readlines())
+#         for charas in range(100):
+#             buf[charas][:] = extract_feature(p[64*charas:64*charas+64])
+#         data[i][:] = buf
+    
+#     return data
 
 def generateDateSet(who,how):
     data = np.empty((20,100,64),dtype='float32')
 
     for i in range(20):
-        data[i][:] = read_onefile("hira{}_{:0>2}{}.dat".format(who,i,how))
-    
+        mesh = np.zeros((100,64), dtype='float32')
+        with open("hira{}_{:0>2}{}.dat".format(who,i,how)) as f:
+            p = np.array(f.readlines())
+        for charas in range(100):
+            char = p[64*charas:64*charas+64]
+            for i in range(64):
+                for j in range(64):
+                    if char[i][j] == '1':
+                        mesh[charas][floor(i/8)+floor(j/8)] += 1
+        data[i][:] = mesh/64
     return data
-
 
 def experiment1():
     writer0_L = generateDateSet(0,"L")
