@@ -2,11 +2,10 @@ import numpy as np
 import os
 import NN
 
-THRESHOLD = 0.001
+THRESHOLD = 0.01
 
 def generateDataSet(writer,use):
     data = np.empty((20,100,64),dtype='float32')
-
     for num in range(20):
         mesh = np.zeros((100,64), dtype='float32')
         with open("hira{}_{:0>2}{}.dat".format(writer,num,use)) as f:
@@ -25,9 +24,8 @@ def experiment1():
     writer0_T = generateDataSet(0,"T")
     writer1_T = generateDataSet(1,"T")
 
-    nn = NN.NeuralNet(64,64,20,0.8,0.3)
+    nn = NN.NeuralNet(64,32,20,0.6,0.7)
 
-    
     mse = 1
     while( THRESHOLD < mse ):
         mse = nn.learn(writer0_L)
@@ -37,14 +35,14 @@ def experiment1():
     nn.test(writer0_T)
     nn.test(writer1_T)
 
+
 def experiment2():
     writer1_L = generateDataSet(1,"L")
     writer0_T = generateDataSet(0,"T")
     writer1_T = generateDataSet(1,"T")
 
-    nn = NN.NeuralNet(64,64,20,0.8,0.3)
+    nn = NN.NeuralNet(64,32,20,0.6,0.7)
 
-    
     mse = 1
     while( THRESHOLD < mse ):
         mse = nn.learn(writer1_L)
@@ -54,6 +52,7 @@ def experiment2():
     nn.test(writer0_T)
     nn.test(writer1_T)
 
+
 def experiment3():
     writer0_L = generateDataSet(0,"L")
     writer1_L = generateDataSet(1,"L")
@@ -62,16 +61,14 @@ def experiment3():
 
     writer01_L = np.empty((20,200,64),dtype='float32')
     writer01_T = np.empty((20,200,64),dtype='float32')
-
     for i in range(20):
         writer01_L[i][0:100] = writer0_L[i]
         writer01_L[i][100:200] = writer1_L[i]
         writer01_T[i][0:100] = writer0_T[i]
         writer01_T[i][100:200] = writer1_T[i]
 
-    nn = NN.NeuralNet(64,64,20,0.8,0.3)
+    nn = NN.NeuralNet(64,32,20,0.6,0.7)
 
-    
     mse = 1
     while( THRESHOLD < mse ):
         mse = nn.learn(writer01_L)
@@ -81,8 +78,12 @@ def experiment3():
     nn.test(writer01_T)
 
 
-if __name__ == '__main__':
+def main():
     os.chdir("Data")
     experiment1()
     #experiment2()
     #experiment3()
+
+
+if __name__ == '__main__':
+    main()

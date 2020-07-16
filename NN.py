@@ -31,17 +31,11 @@ class NeuralNet:
         self.alpha = alpha
 
     def updateWeights(self,v):
-        #(1,n_out)行ベクトル
         vec_m = v*self.output*(1-self.output)
-
-        #(1,n_mid)行ベクトル
         vec_o =  (vec_m * self.weight_out).dot(np.ones(self.output.size)) * self.mid*(1-self.mid)
         
-        #(n_in,n_mid)行列
-        self.update_mid = self.eta * np.array( np.matrix(self.input).T * vec_o) + self.alpha * self.update_mid
-
-        #(n_mid,n_out)行列
-        self.update_out = self.eta * np.array( np.matrix(self.mid).T * vec_m) + self.alpha * self.update_out
+        self.update_mid = self.eta * np.array(np.matrix(self.input).T * vec_o) + self.alpha * self.update_mid
+        self.update_out = self.eta * np.array(np.matrix(self.mid).T * vec_m) + self.alpha * self.update_out
         
         self.weight_mid += self.update_mid
         self.weight_out += self.update_out
