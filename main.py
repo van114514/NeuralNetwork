@@ -2,13 +2,14 @@ import numpy as np
 import os
 import NN
 
+THRESHOLD = 0.001
 
-def generateDataSet(who,how):
+def generateDataSet(writer,use):
     data = np.empty((20,100,64),dtype='float32')
 
     for num in range(20):
         mesh = np.zeros((100,64), dtype='float32')
-        with open("hira{}_{:0>2}{}.dat".format(who,num,how)) as f:
+        with open("hira{}_{:0>2}{}.dat".format(writer,num,use)) as f:
             p = np.array(f.readlines())
         for i in range(100):
             char = p[64*i:64*i+64]
@@ -24,32 +25,34 @@ def experiment1():
     writer0_T = generateDataSet(0,"T")
     writer1_T = generateDataSet(1,"T")
 
-    nn = NN.NeuralNet(64,64,20)
-    nn.set_param(0.8, 0.3)
-    eps = 0.001
-    ev = eps + 1
-    while( eps < ev ):
-        ev = nn.learn(writer0_L)
+    nn = NN.NeuralNet(64,64,20,0.8,0.3)
+
     
-    print(nn.test(writer0_L))
-    print(nn.test(writer0_T))
-    print(nn.test(writer1_T))
+    mse = 1
+    while( THRESHOLD < mse ):
+        mse = nn.learn(writer0_L)
+    
+    print(nn.forward(writer0_L[0][0]))
+    nn.test(writer0_L)
+    nn.test(writer0_T)
+    nn.test(writer1_T)
 
 def experiment2():
     writer1_L = generateDataSet(1,"L")
     writer0_T = generateDataSet(0,"T")
     writer1_T = generateDataSet(1,"T")
 
-    nn = NN.NeuralNet(64,64,20)
-    nn.set_param(0.8, 0.3)
-    eps = 0.001
-    ev = eps + 1
-    while( eps < ev ):
-        ev = nn.learn(writer1_L)
+    nn = NN.NeuralNet(64,64,20,0.8,0.3)
+
     
-    print(nn.test(writer1_L))
-    print(nn.test(writer0_T))
-    print(nn.test(writer1_T))
+    mse = 1
+    while( THRESHOLD < mse ):
+        mse = nn.learn(writer1_L)
+    
+    print(nn.forward(writer1_L[0][0]))
+    nn.test(writer1_L)
+    nn.test(writer0_T)
+    nn.test(writer1_T)
 
 def experiment3():
     writer0_L = generateDataSet(0,"L")
@@ -66,18 +69,20 @@ def experiment3():
         writer01_T[i][0:100] = writer0_T[i]
         writer01_T[i][100:200] = writer1_T[i]
 
-    nn = NN.NeuralNet(64,64,20)
-    nn.set_param(0.8, 0.3)
-    eps = 0.001
-    ev = eps + 1
-    while( eps < ev ):
-        ev = nn.learn(writer01_L)
+    nn = NN.NeuralNet(64,64,20,0.8,0.3)
+
     
-    print(nn.test(writer01_T))
+    mse = 1
+    while( THRESHOLD < mse ):
+        mse = nn.learn(writer01_L)
+    
+    print(nn.forward(writer01_L[0][0]))
+    nn.test(writer01_L)
+    nn.test(writer01_T)
 
 
 if __name__ == '__main__':
     os.chdir("Data")
-    #experiment1()
+    experiment1()
     #experiment2()
-    experiment3()
+    #experiment3()
